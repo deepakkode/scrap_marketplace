@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../components/ui/AuthenticationGuard';
 import Button from '../../../components/ui/Button';
@@ -26,6 +26,16 @@ const RegistrationForm = () => {
     score: 0,
     feedback: []
   });
+
+  useEffect(() =>{
+    axios.post('http://localhost:5000/api/auth/register')
+    .then(response => {
+      console.log(response.data);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  },[]);
 
   const validatePassword = (password) => {
     const checks = {

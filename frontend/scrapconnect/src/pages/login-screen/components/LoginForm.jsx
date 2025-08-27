@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../components/ui/AuthenticationGuard';
 import Button from '../../../components/ui/Button';
@@ -15,7 +16,19 @@ const LoginForm = () => {
     password: '',
     rememberMe: false
   });
+
+useEffect(()=>{
+
+  axios.get('http://localhost:5000/api/login/login')
+    .then(response => {
+      console.log(response.data);
+    })
+    .catch(error => {
+      console.error(error);
+    });
   
+},[])
+
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
