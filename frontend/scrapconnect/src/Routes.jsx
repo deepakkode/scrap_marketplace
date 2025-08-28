@@ -1,37 +1,32 @@
 import React from "react";
-import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
-import ScrollToTop from "components/ScrollToTop";
-import ErrorBoundary from "components/ErrorBoundary";
-import AuthenticationGuard from "./components/ui/AuthenticationGuard";
-import NotFound from "pages/NotFound";
-import ProfilePage from './pages/profile-page';
-import HomeFeed from './pages/home-feed';
-import LoginScreen from './pages/login-screen';
-import UploadPage from './pages/upload-page';
-import ExplorePage from './pages/explore-page';
-import RegisterScreen from './pages/register-screen';
+import { Routes, Route, Navigate } from "react-router-dom";
+import AuthenticationGuard, { useAuth } from "./components/ui/AuthenticationGuard";
+import Header from "./components/ui/Header";
+import ExplorePage from "./pages/explore-page";
+import LoginScreen from "./pages/login-screen";
+import RegisterScreen from "./pages/register-screen";
+import ProfilePage from "./pages/profile-page";
+import UploadPage from "./pages/upload-page";
+import NotFound from "./pages/NotFound";
 
-const Routes = () => {
+function PrivateRoute({ children }){
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? children : <Navigate to="/login-screen" replace />;
+}
+
+export default function AppRoutes(){
   return (
-    <BrowserRouter>
-      <ErrorBoundary>
-        <ScrollToTop />
-        <AuthenticationGuard>
-          <RouterRoutes>
-            {/* Define your route here */}
-            <Route path="/" element={<ExplorePage />} />
-            <Route path="/profile-page" element={<ProfilePage />} />
-            <Route path="/home-feed" element={<HomeFeed />} />
-            <Route path="/login-screen" element={<LoginScreen />} />
-            <Route path="/upload-page" element={<UploadPage />} />
-            <Route path="/explore-page" element={<ExplorePage />} />
-            <Route path="/register-screen" element={<RegisterScreen />} />
-            <Route path="*" element={<NotFound />} />
-          </RouterRoutes>
-        </AuthenticationGuard>
-      </ErrorBoundary>
-    </BrowserRouter>
+    <AuthenticationGuard>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Navigate to="/explore-page" replace />} />
+        <Route path="/explore-page" element={<ExplorePage/>} />
+        <Route path="/login-screen" element={<LoginScreen/>} />
+        <Route path="/register-screen" element={<RegisterScreen/>} />
+        <Route path="/profile-page" element={<PrivateRoute><ProfilePage/></PrivateRoute>} />
+        <Route path="/upload-page" element={<PrivateRoute><UploadPage/></PrivateRoute>} />
+        <Route path="*" element={<NotFound/>} />
+      </Routes>
+    </AuthenticationGuard>
   );
-};
-
-export default Routes;
+}
